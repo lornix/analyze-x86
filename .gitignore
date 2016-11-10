@@ -2,6 +2,7 @@
 *.slo
 *.lo
 *.o
+analyze-x86
 
 # Compiled Dynamic libraries
 *.so

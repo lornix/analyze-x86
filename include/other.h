@@ -19,6 +19,64 @@
  *      MA 02110-1301, USA.
  */
 
+#define NUMCALLS 3
+
+long calls = 0;
+
+static char setcalls [NUMCALLS] [6] = {
+	"call",
+	"callq",
+        "lcall",
+};
+
+#define NUMJMPS 22
+
+long jmps = 0;
+
+static char setjmps [NUMJMPS] [6] = {
+	"jmp",
+        "jne",
+        "jmpq",
+        "je",
+        "jbe",
+	"je,pn",
+	"jcxz",
+	"jno",
+	"jnp",
+	"jo",
+	"jecxz",
+	"jp",
+	"jns",
+	"jae",
+	"jl",
+	"jb",
+	"jge",
+	"js",
+	"ja",
+	"jg",
+	"jle",
+        "ljmp",
+};
+
+#define NUMMOVS 2
+
+long movs = 0;
+
+static char setmovs [NUMMOVS] [5] = {
+	"mov",
+        "movb",
+};
+
+#define NUMNOPS 3
+
+long nops = 0;
+
+static char setnops [NUMNOPS] [5] = {
+	"nop",
+        "nopw",
+        "nopl",
+};
+
 #define NUMRETS 2
 
 long rets = 0;
@@ -26,4 +84,21 @@ long rets = 0;
 static char setrets [NUMRETS] [5] = {
         "ret",
         "retq",
+};
+
+#define NUMSTACK 10
+
+long stack = 0;
+
+static char setstack [NUMSTACK] [6] = {
+	"push",
+        "pusha",
+        "pushf",
+        "pushl",
+        "pushq",
+	"pop",
+        "popa",
+        "popf",
+        "popl",
+        "popq",
 };

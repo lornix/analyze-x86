@@ -99,9 +99,10 @@ int main(int argc, char **argv)
         COMPARE(NUM3DNOWEXT, set3dnowext, i3dnowext);
         COMPARE(NUMAES, setaes, iaes);
         COMPARE(NUMPCLMUL, setpclmul, ipclmul);
+        COMPARE(NUMOTHER, setother, other);
         /* don't know this opcode */
         unknown++;
-        fprintf(stderr, ">%s<\n", s);
+        fprintf(stderr, "\t\"%s\",\n", s);
       DONE:;
     }                           /* end parse */
 
@@ -112,6 +113,7 @@ int main(int argc, char **argv)
     printf("%s:", argv[1]);
     SHOW(count, "count");
     SHOW(unknown, "unk");
+    SHOW(other, "other");
     SHOW(nops, "nop");
     SHOW(calls, "call");
     SHOW(rets, "ret");

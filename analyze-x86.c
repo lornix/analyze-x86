@@ -27,16 +27,24 @@
 #include <sys/types.h>
 #include "analyze-x86.h"
 
+#define COMPARE(num,array,counter) { \
+        for (int i = 0; i < (num); i++) { \
+            if (!strcmp(s, (array)[i])) { \
+                (counter)++; \
+                goto DONE; \
+            } \
+        } \
+}
+
 int main(int argc, char **argv)
 {
     char tmp[8192];
     char *s;
     FILE *f;
-    int i;
     long i486 = 0, i586 = 0, i686 = 0, immx = 0, isse = 0, isse2 = 0,
-         isse3 = 0, issse3 = 0, isse41 = 0, isse42 = 0, isse4a = 0, i3dnow = 0,
-         i3dnowext = 0, iaes = 0, ipclmul = 0, cpuid = 0, nop = 0, call = 0,
-         count = 0, unknown = 0, mov = 0;
+        isse3 = 0, issse3 = 0, isse41 = 0, isse42 = 0, isse4a = 0, i3dnow = 0,
+        i3dnowext = 0, iaes = 0, ipclmul = 0, cpuid = 0, nop = 0, call = 0,
+        count = 0, unknown = 0, mov = 0;
 
     if (argc != 2) {
         printf("Syntax: %s <binary>\n", argv[0]);
@@ -53,137 +61,43 @@ int main(int argc, char **argv)
     }
 
     while (fgets(tmp, 8191, f)) {
-        s = strtok(tmp, "\t");
-        if (!s) {
-            continue;
-        }
-        s = strtok(NULL, "\t");
-        if (!s) {
-            continue;
-        }
+        s = strtok(tmp, "\t");  /* first column */
+        s = strtok(NULL, "\t"); /* second column */
         s = strtok(NULL, "\t"); /* 3rd column contains instruction */
+        s = strtok(s, " \r\n"); /* only want first column of instruction */
+        /* did we end up with an empty string? ignore it */
         if (!s) {
             continue;
         }
-        s = strtok(s, " \r\n");  /* formatting as spaces */
-        /* comparison */
+        /* total count of instructions */
         count++;
+        /* do we know this instruction? */
         if (!strcmp(s, "cpuid")) {
             cpuid++;
             goto DONE;
         }
-        for (i = 0; i < NUMNOPS; i++) {
-            if (!strcmp(s, setnops[i])) {
-                nop++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMCALLS; i++) {
-            if (!strcmp(s, setcalls[i])) {
-                call++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMMOVS; i++) {
-            if (!strcmp(s, setmovs[i])) {
-                mov++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUM686; i++) {
-            if (!strcmp(s, set686[i])) {
-                i686++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMMMX; i++) {
-            if (!strcmp(s, setmmx[i])) {
-                immx++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMSSE; i++) {
-            if (!strcmp(s, setsse[i])) {
-                isse++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMSSE2; i++) {
-            if (!strcmp(s, setsse2[i])) {
-                isse2++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUM486; i++) {
-            if (!strcmp(s, set486[i])) {
-                i486++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUM586; i++) {
-            if (!strcmp(s, set586[i])) {
-                i586++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMSSE3; i++) {
-            if (!strcmp(s, setsse3[i])) {
-                isse3++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMSSSE3; i++) {
-            if (!strcmp(s, setssse3[i])) {
-                issse3++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMSSE41; i++) {
-            if (!strcmp(s, setsse41[i])) {
-                isse41++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMSSE42; i++) {
-            if (!strcmp(s, setsse42[i])) {
-                isse42++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMSSE4a; i++) {
-            if (!strcmp(s, setsse4a[i])) {
-                isse4a++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUM3DNOW; i++) {
-            if (!strcmp(s, set3dnow[i])) {
-                i3dnow++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUM3DNOWEXT; i++) {
-            if (!strcmp(s, set3dnowext[i])) {
-                i3dnowext++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMAES; i++) {
-            if (!strcmp(s, setaes[i])) {
-                iaes++;
-                goto DONE;
-            }
-        }
-        for (i = 0; i < NUMPCLMUL; i++) {
-            if (!strcmp(s, setpclmul[i])) {
-                ipclmul++;
-                goto DONE;
-            }
-        }
+        COMPARE(NUMNOPS, setnops, nop);
+        COMPARE(NUMCALLS, setcalls, call);
+        COMPARE(NUMMOVS, setmovs, mov);
+        COMPARE(NUM686, set686, i686);
+        COMPARE(NUMMMX, setmmx, immx);
+        COMPARE(NUMSSE, setsse, isse);
+        COMPARE(NUMSSE2, setsse2, isse2);
+        COMPARE(NUM486, set486, i486);
+        COMPARE(NUM586, set586, i586);
+        COMPARE(NUMSSE3, setsse3, isse3);
+        COMPARE(NUMSSSE3, setssse3, issse3);
+        COMPARE(NUMSSE41, setsse41, isse41);
+        COMPARE(NUMSSE42, setsse42, isse42);
+        COMPARE(NUMSSE4a, setsse4a, isse4a);
+        COMPARE(NUM3DNOW, set3dnow, i3dnow);
+        COMPARE(NUM3DNOWEXT, set3dnowext, i3dnowext);
+        COMPARE(NUMAES, setaes, iaes);
+        COMPARE(NUMPCLMUL, setpclmul, ipclmul);
         /* don't know this opcode */
         unknown++;
-        printf(">%s<\n",s);
-DONE:;
+        printf(">%s<\n", s);
+      DONE:;
     }                           /* end parse */
 
     /* delete tmp file */

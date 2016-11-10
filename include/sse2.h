@@ -21,6 +21,8 @@
 
 #define NUMSSE2 130
 
+long isse2 = 0;
+
 static char setsse2 [NUMSSE2] [12] = {
 	"addpd",
 	"addsd",

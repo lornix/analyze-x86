@@ -21,6 +21,8 @@
 
 #define NUMMOVS 2
 
+long movs = 0;
+
 static char setmovs [NUMMOVS] [5] = {
 	"mov",
         "movb",

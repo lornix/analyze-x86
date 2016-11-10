@@ -21,6 +21,8 @@
 
 #define NUMAES 7
 
+long iaes = 0;
+
 static char setaes [NUMAES] [16] = {
 	"aesdec",
 	"aesdeclast",

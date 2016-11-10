@@ -21,6 +21,8 @@
 
 #define NUM3DNOWEXT 24
 
+long i3dnowext = 0;
+
 static char set3dnowext [NUM3DNOWEXT] [12] = {
 	"maskmovq",
 	"movntq",

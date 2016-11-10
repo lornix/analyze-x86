@@ -36,4 +36,7 @@
 #include "pclmul.h"
 #include "nops.h"
 #include "calls.h"
+#include "rets.h"
 #include "movs.h"
+#include "jmps.h"
+#include "stack.h"

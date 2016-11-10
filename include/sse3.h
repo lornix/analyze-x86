@@ -21,6 +21,8 @@
 
 #define NUMSSE3 15
 
+long isse3 = 0;
+
 static char setsse3 [NUMSSE3] [12] = {
 	"addsubpd",
 	"addsubps",

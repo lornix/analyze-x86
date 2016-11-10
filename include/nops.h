@@ -21,6 +21,8 @@
 
 #define NUMNOPS 3
 
+long nops = 0;
+
 static char setnops [NUMNOPS] [5] = {
 	"nop",
         "nopw",

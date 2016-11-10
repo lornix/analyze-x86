@@ -21,6 +21,8 @@
 
 #define NUMSSE41 49
 
+long isse41 = 0;
+
 static char setsse41 [NUMSSE41] [12] = {
 	"blendpd",
 	"blendps",

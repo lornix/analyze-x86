@@ -19,63 +19,11 @@
  *      MA 02110-1301, USA.
  */
 
-#define NUM686 54
+#define NUMRETS 2
 
-long i686 = 0;
+long rets = 0;
 
-static char set686 [NUM686] [12] = {
-	"cmova",
-	"cmovae",
-	"cmovb",
-	"cmovbe",
-	"cmovc",
-	"cmove",
-	"cmovg",
-	"cmovge",
-	"cmovl",
-	"cmovle",
-	"cmovna",
-	"cmovnae",
-	"cmovnb",
-	"cmovnbe",
-	"cmovnc",
-	"cmovne",
-	"cmovng",
-	"cmovnge",
-	"cmovnl",
-	"cmovnle",
-	"cmovno",
-	"cmovnp",
-	"cmovns",
-	"cmovnz",
-	"cmovo",
-	"cmovp",
-	"cmovs",
-	"cmovz",
-	"fcmova",
-	"fcmovae",
-	"fcmovb",
-	"fcmovbe",
-	"fcmove",
-	"fcmovna",
-	"fcmovnae",
-	"fcmovnb",
-	"fcmovnbe",
-	"fcmovne",
-	"fcmovnu",
-	"fcmovu",
-	"fcomi",
-	"fcomip",
-	"fcompi",
-	"fucomi",
-	"fucomip",
-	"fucompi",
-	"fxrstor",
-	"fxsave",
-	"rdpmc",
-	"sysenter",
-	"sysexit",
-	"ud2",
-	"ud2a",
-	"ud2b",
+static char setrets [NUMRETS] [5] = {
+        "ret",
+        "retq",
 };

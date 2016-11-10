@@ -21,6 +21,8 @@
 
 #define NUMSSE42 7
 
+long isse42 = 0;
+
 static char setsse42 [NUMSSE42] [12] = {
 	"crc32",
 	"pcmpestri",

@@ -21,6 +21,8 @@
 
 #define NUM3DNOW 24
 
+long i3dnow = 0;
+
 static char set3dnow [NUM3DNOW] [12] = {
 	"femms",
 	"pavgusb",

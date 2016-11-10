@@ -21,6 +21,8 @@
 
 #define NUMCALLS 2
 
+long calls = 0;
+
 static char setcalls [NUMCALLS] [6] = {
 	"call",
 	"callq",

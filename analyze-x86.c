@@ -35,19 +35,21 @@
             } \
         } \
 }
+#define SHOW(var, str) { \
+    if (var) { \
+        printf("\t%s: %lu (%lu%%)", str, var, ((var * 100) / count)); \
+    } \
+} 
 
 int main(int argc, char **argv)
 {
     char tmp[8192];
     char *s;
     FILE *f;
-    long i486 = 0, i586 = 0, i686 = 0, immx = 0, isse = 0, isse2 = 0,
-        isse3 = 0, issse3 = 0, isse41 = 0, isse42 = 0, isse4a = 0, i3dnow = 0,
-        i3dnowext = 0, iaes = 0, ipclmul = 0, cpuid = 0, nop = 0, call = 0,
-        count = 0, unknown = 0, mov = 0;
+    long count = 0, unknown = 0, cpuid = 0;
 
     if (argc != 2) {
-        printf("Syntax: %s <binary>\n", argv[0]);
+        fprintf(stderr, "Syntax: %s <binary>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
@@ -56,7 +58,7 @@ int main(int argc, char **argv)
     f = popen(tmp, "r");
 
     if (!f) {
-        printf("%s: unable to disassemble given binary argument\n", argv[1]);
+        fprintf(stderr, "%s: unable to disassemble given binary argument\n", argv[1]);
         return EXIT_FAILURE;
     }
 
@@ -76,9 +78,12 @@ int main(int argc, char **argv)
             cpuid++;
             goto DONE;
         }
-        COMPARE(NUMNOPS, setnops, nop);
-        COMPARE(NUMCALLS, setcalls, call);
-        COMPARE(NUMMOVS, setmovs, mov);
+        COMPARE(NUMNOPS, setnops, nops);
+        COMPARE(NUMCALLS, setcalls, calls);
+        COMPARE(NUMRETS, setrets, rets);
+        COMPARE(NUMSTACK, setstack, stack);
+        COMPARE(NUMMOVS, setmovs, movs);
+        COMPARE(NUMJMPS, setjmps, jmps);
         COMPARE(NUM686, set686, i686);
         COMPARE(NUMMMX, setmmx, immx);
         COMPARE(NUMSSE, setsse, isse);
@@ -96,7 +101,7 @@ int main(int argc, char **argv)
         COMPARE(NUMPCLMUL, setpclmul, ipclmul);
         /* don't know this opcode */
         unknown++;
-        printf(">%s<\n", s);
+        fprintf(stderr, ">%s<\n", s);
       DONE:;
     }                           /* end parse */
 
@@ -105,63 +110,30 @@ int main(int argc, char **argv)
 
     /* print statistics */
     printf("%s:", argv[1]);
-    if (count) {
-        printf("\tcount: %lu", count);
-    }
-    if (nop) {
-        printf("\tnop: %lu", nop);
-    }
-    if (call) {
-        printf("\tcall: %lu", call);
-    }
-    if (mov) {
-        printf("\tmov: %lu", mov);
-    }
-    if (unknown) {
-        printf("\tunknown: %lu", unknown);
-    }
-    if (cpuid) {
-        printf("cpuid: %lu", cpuid);
-    }
-    if (i486) {
-        printf("\ti486: %lu", i486);
-    }
-    if (i586) {
-        printf("\ti586: %lu", i586);
-    }
-    if (i686) {
-        printf("\ti686: %lu", i686);
-    }
-    if (immx) {
-        printf("\tmmx: %lu", immx);
-    }
-    if (isse) {
-        printf("\tsse: %lu", isse);
-    }
-    if (isse2) {
-        printf("\tsse2: %lu", isse2);
-    }
-    if (isse3) {
-        printf("\tsse3: %lu", isse3);
-    }
-    if (issse3) {
-        printf("\tssse3: %lu", issse3);
-    }
-    if (isse41) {
-        printf("\tsse4.1: %lu", isse41);
-    }
-    if (isse42) {
-        printf("\tsse4.2: %lu", isse42);
-    }
-    if (i3dnow) {
-        printf("\t3dnow!: %lu", i3dnow);
-    }
-    if (i3dnowext) {
-        printf("\t3dnowext: %lu", i3dnowext);
-    }
-    if (iaes) {
-        printf("\taes: %lu", iaes);
-    }
+    SHOW(count, "count");
+    SHOW(unknown, "unk");
+    SHOW(nops, "nop");
+    SHOW(calls, "call");
+    SHOW(rets, "ret");
+    SHOW(stack, "stack");
+    SHOW(movs, "mov");
+    SHOW(jmps, "jmp");
+    SHOW(cpuid, "cpuid");
+    SHOW(i486, "i486");
+    SHOW(i586, "i586");
+    SHOW(i686, "i686");
+    SHOW(immx, "mmx");
+    SHOW(isse, "sse");
+    SHOW(isse2, "sse2");
+    SHOW(isse3, "sse3");
+    SHOW(issse3, "ssse3");
+    SHOW(isse41, "sse4.1");
+    SHOW(isse42, "sse4.2");
+    SHOW(isse4a, "sse4a");
+    SHOW(i3dnow, "3dnow");
+    SHOW(i3dnowext, "3dnowext");
+    SHOW(iaes, "aes");
+    SHOW(ipclmul, "pclmul");
     printf("\n");
     return EXIT_SUCCESS;
 }

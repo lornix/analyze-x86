@@ -21,6 +21,8 @@
 
 #define NUMSSSE3 16
 
+long issse3 = 0;
+
 static char setssse3 [NUMSSSE3] [12] = {
 	"pabsb",
 	"pabsw",

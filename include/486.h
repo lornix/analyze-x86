@@ -21,6 +21,8 @@
 
 #define NUM486 6
 
+long i486 = 0;
+
 static char set486 [NUM486] [12] = {
 	"bswap",
 	"cmpxchg",

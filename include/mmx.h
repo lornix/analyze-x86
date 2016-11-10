@@ -21,6 +21,8 @@
 
 #define NUMMMX 47
 
+long immx = 0;
+
 static char setmmx [NUMMMX] [12] = {
 	"emms",
 	"movd",

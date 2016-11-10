@@ -21,6 +21,8 @@
 
 #define NUM586 4
 
+long i586 = 0;
+
 static char set586 [NUM586] [12] = {
 	"cmpxchg8b",
 	"rdmsr",

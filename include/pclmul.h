@@ -21,6 +21,8 @@
 
 #define NUMPCLMUL 1
 
+long ipclmul = 0;
+
 static char setpclmul [NUMPCLMUL] [12] = {
 	"pclmulqdq"
 };

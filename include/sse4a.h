@@ -21,6 +21,8 @@
 
 #define NUMSSE4a 6
 
+long isse4a = 0;
+
 static char setsse4a [NUMSSE4a] [12] = {
 	"extrq",
 	"insertq",

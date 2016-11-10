@@ -19,21 +19,9 @@
  *      MA 02110-1301, USA.
  */
 
-#include "486.h"
-#include "586.h"
-#include "686.h"
-#include "mmx.h"
-#include "sse.h"
-#include "sse2.h"
-#include "3dnow.h"
-#include "3dnowext.h"
-#include "sse3.h"
-#include "ssse3.h"
-#include "sse41.h"
-#include "sse42.h"
-#include "sse4a.h"
-#include "aes.h"
-#include "pclmul.h"
-#include "nops.h"
-#include "calls.h"
-#include "movs.h"
+#define NUMCALLS 2
+
+static char setcalls [NUMCALLS] [6] = {
+	"call",
+	"callq",
+};

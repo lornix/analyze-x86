@@ -30,18 +30,17 @@
 int main(int argc, char **argv)
 {
     char tmp[8192];
-    char *e, *s, *x;
-    int ret = 0;
-    char itmp[256];
+    char *s;
     FILE *f;
     int i;
     long i486 = 0, i586 = 0, i686 = 0, immx = 0, isse = 0, isse2 = 0,
-        isse3 = 0, issse3 = 0, isse41 = 0, isse42 = 0, isse4a = 0, i3dnow = 0,
-        i3dnowext = 0, iaes = 0, ipclmul = 0, cpuid = 0, nop = 0, call = 0, count = 0;
+         isse3 = 0, issse3 = 0, isse41 = 0, isse42 = 0, isse4a = 0, i3dnow = 0,
+         i3dnowext = 0, iaes = 0, ipclmul = 0, cpuid = 0, nop = 0, call = 0,
+         count = 0, unknown = 0, mov = 0;
 
     if (argc != 2) {
         printf("Syntax: %s <binary>\n", argv[0]);
-        return (-1);
+        return EXIT_FAILURE;
     }
 
     snprintf(tmp, 8191, "objdump -d %s", argv[1]);
@@ -54,131 +53,137 @@ int main(int argc, char **argv)
     }
 
     while (fgets(tmp, 8191, f)) {
-        e = strtok(tmp, "\t");
-        if (!e) {
+        s = strtok(tmp, "\t");
+        if (!s) {
             continue;
         }
-        e = strtok(NULL, "\t");
-        if (!e) {
+        s = strtok(NULL, "\t");
+        if (!s) {
             continue;
         }
-        e = strtok(NULL, "\t"); /* 3rd column contains instruction */
-        snprintf(itmp, 255, "%s", e);
-        s = strtok(itmp, " ");  /* formatting as spaces */
-        if (s) {
-            x = s;              /* clean, in case instruction is without args, i.e. nop */
-            while (*x) {
-                if (*x == '\n' || *x == '\r') {
-                    *x = 0;
-                    break;
-                }
-                x++;
-            }
-            /* comparation */
-            count++;
-            if (!strcmp(s, "cpuid")) {
-                cpuid++;
-                continue;
-            }
-            if (!strcmp(s, "nop")) {
+        s = strtok(NULL, "\t"); /* 3rd column contains instruction */
+        if (!s) {
+            continue;
+        }
+        s = strtok(s, " \r\n");  /* formatting as spaces */
+        /* comparison */
+        count++;
+        if (!strcmp(s, "cpuid")) {
+            cpuid++;
+            goto DONE;
+        }
+        for (i = 0; i < NUMNOPS; i++) {
+            if (!strcmp(s, setnops[i])) {
                 nop++;
-                continue;
+                goto DONE;
             }
-            if (!strcmp(s, "call")) {
+        }
+        for (i = 0; i < NUMCALLS; i++) {
+            if (!strcmp(s, setcalls[i])) {
                 call++;
-                continue;
+                goto DONE;
             }
-            for (i = 0; i < NUM686; i++) {
-                if (!strcmp(s, set686[i])) {
-                    i686++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUMMOVS; i++) {
+            if (!strcmp(s, setmovs[i])) {
+                mov++;
+                goto DONE;
             }
-            for (i = 0; i < NUMMMX; i++) {
-                if (!strcmp(s, setmmx[i])) {
-                    immx++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUM686; i++) {
+            if (!strcmp(s, set686[i])) {
+                i686++;
+                goto DONE;
             }
-            for (i = 0; i < NUMSSE; i++) {
-                if (!strcmp(s, setsse[i])) {
-                    isse++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUMMMX; i++) {
+            if (!strcmp(s, setmmx[i])) {
+                immx++;
+                goto DONE;
             }
-            for (i = 0; i < NUMSSE2; i++) {
-                if (!strcmp(s, setsse2[i])) {
-                    isse2++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUMSSE; i++) {
+            if (!strcmp(s, setsse[i])) {
+                isse++;
+                goto DONE;
             }
-            for (i = 0; i < NUM486; i++) {
-                if (!strcmp(s, set486[i])) {
-                    i486++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUMSSE2; i++) {
+            if (!strcmp(s, setsse2[i])) {
+                isse2++;
+                goto DONE;
             }
-            for (i = 0; i < NUM586; i++) {
-                if (!strcmp(s, set586[i])) {
-                    i586++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUM486; i++) {
+            if (!strcmp(s, set486[i])) {
+                i486++;
+                goto DONE;
             }
-            for (i = 0; i < NUMSSE3; i++) {
-                if (!strcmp(s, setsse3[i])) {
-                    isse3++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUM586; i++) {
+            if (!strcmp(s, set586[i])) {
+                i586++;
+                goto DONE;
             }
-            for (i = 0; i < NUMSSSE3; i++) {
-                if (!strcmp(s, setssse3[i])) {
-                    issse3++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUMSSE3; i++) {
+            if (!strcmp(s, setsse3[i])) {
+                isse3++;
+                goto DONE;
             }
-            for (i = 0; i < NUMSSE41; i++) {
-                if (!strcmp(s, setsse41[i])) {
-                    isse41++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUMSSSE3; i++) {
+            if (!strcmp(s, setssse3[i])) {
+                issse3++;
+                goto DONE;
             }
-            for (i = 0; i < NUMSSE42; i++) {
-                if (!strcmp(s, setsse42[i])) {
-                    isse42++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUMSSE41; i++) {
+            if (!strcmp(s, setsse41[i])) {
+                isse41++;
+                goto DONE;
             }
-            for (i = 0; i < NUMSSE4a; i++) {
-                if (!strcmp(s, setsse4a[i])) {
-                    isse4a++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUMSSE42; i++) {
+            if (!strcmp(s, setsse42[i])) {
+                isse42++;
+                goto DONE;
             }
-            for (i = 0; i < NUM3DNOW; i++) {
-                if (!strcmp(s, set3dnow[i])) {
-                    i3dnow++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUMSSE4a; i++) {
+            if (!strcmp(s, setsse4a[i])) {
+                isse4a++;
+                goto DONE;
             }
-            for (i = 0; i < NUM3DNOWEXT; i++) {
-                if (!strcmp(s, set3dnowext[i])) {
-                    i3dnowext++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUM3DNOW; i++) {
+            if (!strcmp(s, set3dnow[i])) {
+                i3dnow++;
+                goto DONE;
             }
-            for (i = 0; i < NUMAES; i++) {
-                if (!strcmp(s, setaes[i])) {
-                    iaes++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUM3DNOWEXT; i++) {
+            if (!strcmp(s, set3dnowext[i])) {
+                i3dnowext++;
+                goto DONE;
             }
-            for (i = 0; i < NUMPCLMUL; i++) {
-                if (!strcmp(s, setpclmul[i])) {
-                    ipclmul++;
-                    continue;
-                }
+        }
+        for (i = 0; i < NUMAES; i++) {
+            if (!strcmp(s, setaes[i])) {
+                iaes++;
+                goto DONE;
             }
-        }                       /* instruction */
+        }
+        for (i = 0; i < NUMPCLMUL; i++) {
+            if (!strcmp(s, setpclmul[i])) {
+                ipclmul++;
+                goto DONE;
+            }
+        }
+        /* don't know this opcode */
+        unknown++;
+        printf(">%s<\n",s);
+DONE:;
     }                           /* end parse */
 
     /* delete tmp file */
@@ -194,6 +199,12 @@ int main(int argc, char **argv)
     }
     if (call) {
         printf("\tcall: %lu", call);
+    }
+    if (mov) {
+        printf("\tmov: %lu", mov);
+    }
+    if (unknown) {
+        printf("\tunknown: %lu", unknown);
     }
     if (cpuid) {
         printf("cpuid: %lu", cpuid);
@@ -238,5 +249,5 @@ int main(int argc, char **argv)
         printf("\taes: %lu", iaes);
     }
     printf("\n");
-    return 0;
+    return EXIT_SUCCESS;
 }
